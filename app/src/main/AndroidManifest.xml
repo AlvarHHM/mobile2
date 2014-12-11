@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="edu.mobile.assignment" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="edu.mobile.assignment.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="edu.mobile.assignment.LectureListActivity"
+            android:label="@string/title_activity_lecture_list"
+            android:parentActivityName="edu.mobile.assignment.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.mobile.assignment.MainActivity" />
+        </activity>
+
+        <provider
+            android:name="edu.mobile.assignment.data.LectureContentProvider"
+            android:authorities="edu.mobile.assignment.data"
+            android:enabled="true"
+            android:exported="true" >
+        </provider>
+
+        <activity
+            android:name="edu.mobile.assignment.LectureDetailActivity"
+            android:label="@string/title_activity_lecture_detail"
+            android:parentActivityName="edu.mobile.assignment.LectureListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.mobile.assignment.LectureListActivity" />
+        </activity>
+        <activity
+            android:name="edu.mobile.assignment.LectureInputActivity"
+            android:label="@string/title_activity_lecture_input"
+            android:parentActivityName="edu.mobile.assignment.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.mobile.assignment.MainActivity" />
+        </activity>
+        <activity
+            android:name="edu.mobile.assignment.LectureFileActivity"
+            android:label="@string/title_activity_lecture_file" >
+        </activity>
+        <activity
+            android:name="edu.mobile.assignment.ExDialog"
+            android:label="File Picker" >
+        </activity>
+
+        <receiver
+            android:name="edu.mobile.assignment.LectureNotifyReceiver"
+            android:enabled="true"
+            android:exported="true" >
+        </receiver>
+    </application>
+
+</manifest>
