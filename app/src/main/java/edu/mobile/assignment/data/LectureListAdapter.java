@@ -18,34 +18,34 @@ import edu.mobile.assignment.R;
 /**
  * Created by alvar on 10/12/14.
  */
-public class LectureListAdapter extends BaseAdapter{
+public class LectureListAdapter extends BaseAdapter {
 
     private final Context context;
 
-    public LectureListAdapter(Context context){
+    public LectureListAdapter(Context context) {
         this.context = context;
 
     }
 
-    private HashMap<String,String>[] lectureArray = new HashMap[9];
+    private HashMap<String, String>[] lectureArray = new HashMap[9];
 
-    public void init(Cursor cursor){
+    public void init(Cursor cursor) {
         lectureArray = new HashMap[9];
-        if(cursor == null){
+        if (cursor == null) {
             return;
         }
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 Calendar cal = Calendar.getInstance();
                 cal.clear();
-                cal.add(Calendar.MILLISECOND,(int)cursor.getLong(cursor.getColumnIndexOrThrow("time")));
-                int slot = cal.get(Calendar.HOUR_OF_DAY)-9;
-                HashMap<String,String> prop = new HashMap<String, String>();
-                for(int i = 0; i < cursor.getColumnCount();i++){
+                cal.add(Calendar.MILLISECOND, (int) cursor.getLong(cursor.getColumnIndexOrThrow("time")));
+                int slot = cal.get(Calendar.HOUR_OF_DAY) - 9;
+                HashMap<String, String> prop = new HashMap<String, String>();
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
                     prop.put(cursor.getColumnName(i), cursor.getString(i));
                 }
                 lectureArray[slot] = prop;
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         notifyDataSetChanged();
     }
@@ -62,27 +62,27 @@ public class LectureListAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int i) {
-        return lectureArray[i] != null?Long.valueOf(lectureArray[i].get("_id")):-1;
+        return lectureArray[i] != null ? Long.valueOf(lectureArray[i].get("_id")) : -1;
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        if(view == null){
-            view = LayoutInflater.from(context).inflate(R.layout.list_item_card,viewGroup,false);
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.list_item_card, viewGroup, false);
         }
-        HashMap<String,String> prop = lectureArray[i];
+        HashMap<String, String> prop = lectureArray[i];
         TextView moduleText = (TextView) view.findViewById(R.id.list_module);
         TextView lecturerText = (TextView) view.findViewById(R.id.list_lecturer);
         TextView roomText = (TextView) view.findViewById(R.id.list_room);
         TextView timeText = (TextView) view.findViewById(R.id.list_time);
-        timeText.setText(String.valueOf((i+9))+":00");
-        if(lectureArray[i] != null){
+        timeText.setText(String.valueOf((i + 9)) + ":00");
+        if (lectureArray[i] != null) {
             moduleText.setText(prop.get("module"));
             lecturerText.setText(prop.get("lecturer"));
             roomText.setText(prop.get("room"));
 
             view.findViewById(R.id.empty_slot).setVisibility(View.GONE);
-        }else{
+        } else {
             moduleText.setText("");
             lecturerText.setText("");
             roomText.setText("");

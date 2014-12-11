@@ -28,11 +28,9 @@ import java.util.Map;
 
 import edu.mobile.assignment.data.LectureListAdapter;
 
-/**
- * Created by alvar on 10/12/14.
- */
+
 public class LectureListFragment extends ListFragment
-        implements LoaderManager.LoaderCallbacks<Cursor>,View.OnTouchListener{
+        implements LoaderManager.LoaderCallbacks<Cursor>, View.OnTouchListener {
 
 
     private boolean dualPanel;
@@ -49,14 +47,14 @@ public class LectureListFragment extends ListFragment
         View detailFrame = getActivity().findViewById(R.id.lecture_detail_container);
         dualPanel = detailFrame != null && detailFrame.getVisibility() == View.VISIBLE;
 
-        if(dualPanel){
+        if (dualPanel) {
             getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         }
 
-        semester = getActivity().getIntent().getIntExtra("semester",0);
-        week = getActivity().getIntent().getIntExtra("week",0);
-        day = getActivity().getIntent().getIntExtra("day",0);
+        semester = getActivity().getIntent().getIntExtra("semester", 0);
+        week = getActivity().getIntent().getIntExtra("week", 0);
+        day = getActivity().getIntent().getIntExtra("day", 0);
 
         ProgressBar progressBar = new ProgressBar(getActivity());
         progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -69,16 +67,19 @@ public class LectureListFragment extends ListFragment
         adapter = new LectureListAdapter(getActivity());
         setListAdapter(adapter);
         getListView().setOnTouchListener(this);
-        getLoaderManager().initLoader(0,null,this);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
         return new CursorLoader(getActivity(), Uri.parse("content://edu.mobile.assignment.data"),
-                null,"time >= ? and time < ? and semester=? and (week like ? or week like ? or week like ?)",
-                new String[]{String.valueOf((day-1)*86400000),String.valueOf(day*86400000),
-                String.valueOf(semester),"%"+String.valueOf(week)+",%",String.valueOf(week)+",%","%"+String.valueOf(week)+","},null);
+                null,
+                "time >= ? and time < ? and semester=? " +
+                        "and (week like ? or week like ? or week like ?)",
+                new String[]{String.valueOf((day - 1) * 86400000), String.valueOf(day * 86400000),
+                        String.valueOf(semester), "%" + String.valueOf(week) + ",%",
+                        String.valueOf(week) + ",%", "%" + String.valueOf(week) + ","}, null);
 
     }
 
@@ -94,32 +95,32 @@ public class LectureListFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if(id == -1){
+        if (id == -1) {
             return;
         }
-        if(dualPanel){
-            LectureDetailFragment detailFragment = LectureDetailFragment.newInstance((int)id);
+        if (dualPanel) {
+            LectureDetailFragment detailFragment = LectureDetailFragment.newInstance((int) id);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.lecture_detail_container,detailFragment);
+            ft.replace(R.id.lecture_detail_container, detailFragment);
             ft.commit();
-        }else{
-            Intent intent = new Intent(getActivity(),LectureDetailActivity.class);
-            intent.putExtra("_id",(int)id);
+        } else {
+            Intent intent = new Intent(getActivity(), LectureDetailActivity.class);
+            intent.putExtra("_id", (int) id);
             startActivity(intent);
         }
-
 
 
     }
 
     private final GestureDetector gestureDetector
-            = new GestureDetector(getActivity(),new MyGestureDetector());
+            = new GestureDetector(getActivity(), new MyGestureDetector());
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
         if (gestureDetector.onTouchEvent(motionEvent)) {
-            showDeleteButton(getListView().pointToPosition((int)motionEvent.getX(),(int)motionEvent.getY()));
+            showDeleteButton(getListView().pointToPosition((int) motionEvent.getX(),
+                    (int) motionEvent.getY()));
             return true;
         }
         return false;
@@ -141,7 +142,7 @@ public class LectureListFragment extends ListFragment
 
     private boolean showDeleteButton(final int pos) {
         View child = getListView().getChildAt(pos);
-        if (child != null && (child.findViewById(R.id.empty_slot).getVisibility() == View.GONE)){
+        if (child != null && (child.findViewById(R.id.empty_slot).getVisibility() == View.GONE)) {
             ImageButton delete = (ImageButton) child.findViewById(R.id.btn_set_alarm);
             if (delete != null)
                 if (delete.getVisibility() == View.GONE)
@@ -161,20 +162,20 @@ public class LectureListFragment extends ListFragment
         return false;
     }
 
-    private void setAlarmForLecture(int pos){
+    private void setAlarmForLecture(int pos) {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND,5);
+        cal.add(Calendar.SECOND, 5);
 
-        Intent intent = new Intent(getActivity(),LectureNotifyReceiver.class);
-        Map<String,String> map = (Map<String, String>) ((LectureListAdapter) getListView()
+        Intent intent = new Intent(getActivity(), LectureNotifyReceiver.class);
+        Map<String, String> map = (Map<String, String>) ((LectureListAdapter) getListView()
                 .getAdapter()).getItem(pos);
-        intent.putExtra("module",map.get("module"));
-        intent.putExtra("room",map.get("room"));
+        intent.putExtra("module", map.get("module"));
+        intent.putExtra("room", map.get("room"));
 
 
-        PendingIntent pi = PendingIntent.getBroadcast(getActivity(),1,intent,PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_ONE_SHOT);
 
         AlarmManager am = (AlarmManager) getActivity().getSystemService(getActivity().ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(),pi);
+        am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
     }
 }

@@ -22,7 +22,7 @@ public class LectureNotifyReceiver extends BroadcastReceiver {
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm);
         NotificationManager notificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0,nBuilder.build());
+        notificationManager.notify(0, nBuilder.getNotification());
 
     }
 }

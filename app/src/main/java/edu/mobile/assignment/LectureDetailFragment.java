@@ -30,7 +30,8 @@ import java.util.Calendar;
 
 import edu.mobile.assignment.data.DBHelper;
 
-public class LectureDetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class LectureDetailFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private int _id;
@@ -47,21 +48,15 @@ public class LectureDetailFragment extends Fragment implements LoaderManager.Loa
     public static LectureDetailFragment newInstance(int _id) {
         LectureDetailFragment fragment = new LectureDetailFragment();
         Bundle args = new Bundle();
-        args.putInt("_id",_id);
+        args.putInt("_id", _id);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public LectureDetailFragment() {
-        // Required empty public constructor
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _id = getArguments().getInt("_id");
-
     }
 
     @Override
@@ -77,37 +72,43 @@ public class LectureDetailFragment extends Fragment implements LoaderManager.Loa
         timeText = (TextView) rootView.findViewById(R.id.text_detail_time);
         mapImage = (ImageView) rootView.findViewById(R.id.detail_map);
 
-        getLoaderManager().initLoader(0,null,this);
+        getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.i("",_id+"");
+        Log.i("", _id + "");
         return new CursorLoader(getActivity(), Uri.parse("content://edu.mobile.assignment.data"),
-                null,"_id = ?",
-                new String[]{String.valueOf(getArguments().getInt("_id"))},null);
+                null, "_id = ?",
+                new String[]{String.valueOf(getArguments().getInt("_id"))}, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             moduleText.setText(cursor.getString(cursor.getColumnIndexOrThrow("module")));
             roomText.setText(cursor.getString(cursor.getColumnIndexOrThrow("room")));
             lecturerText.setText(cursor.getString(cursor.getColumnIndexOrThrow("lecturer")));
             semesterText.setText(cursor.getString(cursor.getColumnIndexOrThrow("semester")));
             weekText.setText(cursor.getString(cursor.getColumnIndexOrThrow("week")));
 
-            switch (cursor.getInt(cursor.getColumnIndexOrThrow("type"))){
-                case 0: typeText.setText("Lecture");break;
-                case 1: typeText.setText("Tutorial");break;
-                case 2: typeText.setText("Lab");break;
+            switch (cursor.getInt(cursor.getColumnIndexOrThrow("type"))) {
+                case 0:
+                    typeText.setText("Lecture");
+                    break;
+                case 1:
+                    typeText.setText("Tutorial");
+                    break;
+                case 2:
+                    typeText.setText("Lab");
+                    break;
             }
             int time = cursor.getInt(cursor.getColumnIndexOrThrow("time"));
             Calendar cal = Calendar.getInstance();
             cal.clear();
-            cal.add(Calendar.MILLISECOND,time);
-            timeText.setText(cal.get(Calendar.HOUR_OF_DAY)+":00");
+            cal.add(Calendar.MILLISECOND, time);
+            timeText.setText(cal.get(Calendar.HOUR_OF_DAY) + ":00");
             loadMapImage(roomText.getText().toString());
         }
 
@@ -115,21 +116,21 @@ public class LectureDetailFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
     }
 
     private void loadMapImage(String room) {
-        DBHelper dbHelper = new DBHelper(getActivity(),null);
+        DBHelper dbHelper = new DBHelper(getActivity(), null);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("select lat,lon from room where room=?",new String[]{room});
-        if(c.moveToFirst()){
-            final double lat =  (c.getInt(0)/Math.pow(10,6));
-            final double lon =  (c.getInt(1)/Math.pow(10,6));
-            new LoadImageFromURL().execute(lat,lon);
+        Cursor c = db.rawQuery("select lat,lon from room where room=?", new String[]{room});
+        if (c.moveToFirst()) {
+            final double lat = (c.getInt(0) / Math.pow(10, 6));
+            final double lon = (c.getInt(1) / Math.pow(10, 6));
+            new LoadImageFromURL().execute(lat, lon);
             mapImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:" + lat + "," + lon));
+                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("geo:" + lat + "," + lon));
                     startActivity(intent);
                 }
             });
@@ -141,18 +142,17 @@ public class LectureDetailFragment extends Fragment implements LoaderManager.Loa
 
         @Override
         protected Bitmap doInBackground(Double... params) {
-            // TODO Auto-generated method stub
             try {
-                URL url = new URL("http://maps.googleapis.com/maps/api/staticmap?center=" + params[0] + "," + params[1] + "&zoom=15&size=300x300&sensor=false&markers=color:red%7Clabel:A%7C" + params[0] + "," + params[1]);
+                URL url = new URL("http://maps.googleapis.com/maps/api/staticmap?center="
+                        + params[0] + "," + params[1]
+                        + "&zoom=15&size=300x300&sensor=false&markers=color:red%7Clabel:A%7C"
+                        + params[0] + "," + params[1]);
                 InputStream is = url.openConnection().getInputStream();
                 Bitmap bitMap = BitmapFactory.decodeStream(is);
                 return bitMap;
-
             } catch (MalformedURLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             return null;
@@ -161,8 +161,6 @@ public class LectureDetailFragment extends Fragment implements LoaderManager.Loa
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            // TODO Auto-generated method stub
-
             super.onPostExecute(result);
             mapImage.setImageBitmap(result);
         }

@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class LectureFileActivity extends FragmentActivity {
 
-    private  ViewPager viewPager;
+    private ViewPager viewPager;
     private Button addFileButton;
 
     @Override
@@ -43,27 +43,27 @@ public class LectureFileActivity extends FragmentActivity {
         addFileButton = (Button) findViewById(R.id.btn_add_file);
         viewPager = (ViewPager) findViewById(R.id.file_pager_container);
         viewPager.setAdapter(new FilePagerAdapter(getFragmentManager()));
+        setupActionbar();
+    }
 
-
-
+    private void setupActionbar() {
         final ActionBar actionBar = getActionBar();
-
-
-        // Specify that tabs should be displayed in the action bar.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
             public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // show the given tab
                 viewPager.setCurrentItem(tab.getPosition());
             }
-            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {}
-            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {}
+
+            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+            }
+
+            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+            }
         };
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
             @Override
             public void onPageSelected(int position) {
@@ -71,47 +71,40 @@ public class LectureFileActivity extends FragmentActivity {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrollStateChanged(int state) {
+            }
         });
-
-        // Add 3 tabs, specifying the tab's text and TabListener
         for (int i = 0; i < 12; i++) {
             actionBar.addTab(
                     actionBar.newTab()
                             .setText("Week " + (i + 1))
                             .setTabListener(tabListener));
         }
-
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK){
-            String module = getIntent().getStringExtra("module");
-            int week = viewPager.getCurrentItem()+1;
-            SharedPreferences sharedPreferences =
-                    getSharedPreferences(module + week, Activity.MODE_PRIVATE);
-            Uri uri = data.getData();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString(new File(uri.toString()).getName(),uri.toString());
-            editor.commit();
-//            LectureFileFragment frag = (LectureFileFragment) getFragmentManager()
-//                    .findFragmentByTag("android:switcher:" + R.id.file_pager_container
-//                    + ":" + viewPager.getCurrentItem());
-//            frag.loadFileList();
-        }
-    }
-
-    public void addFile(View view){
-        Intent intent = new Intent(getApplicationContext(),ExDialog.class);
+    public void addFile(View view) {
+        Intent intent = new Intent(getApplicationContext(), ExDialog.class);
         intent.putExtra("explorer_title",
                 getString(R.string.dialog_read_from_dir));
         intent.setDataAndType(Uri.fromFile(new File("/sdcard")), "*/*");
         startActivityForResult(intent, 1);
-
     }
 
-    public class FilePagerAdapter extends FragmentStatePagerAdapter{
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            String module = getIntent().getStringExtra("module");
+            int week = viewPager.getCurrentItem() + 1;
+            SharedPreferences sharedPreferences =
+                    getSharedPreferences(module + week, Activity.MODE_PRIVATE);
+            Uri uri = data.getData();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(new File(uri.toString()).getName(), uri.toString());
+            editor.commit();
+        }
+    }
+
+    public class FilePagerAdapter extends FragmentStatePagerAdapter {
 
         public FilePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -119,7 +112,7 @@ public class LectureFileActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return LectureFileFragment.newInstance(position+1);
+            return LectureFileFragment.newInstance(position + 1);
         }
 
         @Override
@@ -133,7 +126,7 @@ public class LectureFileActivity extends FragmentActivity {
         }
     }
 
-    public static class LectureFileFragment extends ListFragment{
+    public static class LectureFileFragment extends ListFragment {
 
         private ArrayAdapter<String> adapter;
         private Map map;
@@ -141,7 +134,7 @@ public class LectureFileActivity extends FragmentActivity {
         public static LectureFileFragment newInstance(int week) {
             LectureFileFragment fragment = new LectureFileFragment();
             Bundle args = new Bundle();
-            args.putInt("week",week);
+            args.putInt("week", week);
             fragment.setArguments(args);
             return fragment;
         }
@@ -150,7 +143,7 @@ public class LectureFileActivity extends FragmentActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
             adapter = new ArrayAdapter<String>(getActivity(),
-                    android.R.layout.simple_list_item_1,new ArrayList<String>());
+                    android.R.layout.simple_list_item_1, new ArrayList<String>());
             setListAdapter(adapter);
             loadFileList();
 
@@ -159,7 +152,7 @@ public class LectureFileActivity extends FragmentActivity {
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse((String)map.get(adapter.getItem(position))), "*/*");
+            intent.setDataAndType(Uri.parse((String) map.get(adapter.getItem(position))), "*/*");
             startActivity(intent);
         }
 
@@ -174,9 +167,9 @@ public class LectureFileActivity extends FragmentActivity {
             int week = getArguments().getInt("week");
             SharedPreferences sharedPreferences = getActivity()
                     .getSharedPreferences(module + week, Activity.MODE_PRIVATE);
-            map =  sharedPreferences.getAll();
+            map = sharedPreferences.getAll();
             ArrayList<String> fileNameArray = new ArrayList<String>();
-            for(Object key : map.keySet()){
+            for (Object key : map.keySet()) {
                 String fileName = (String) key;
                 fileNameArray.add(fileName);
             }
@@ -189,28 +182,5 @@ public class LectureFileActivity extends FragmentActivity {
                                  Bundle savedInstanceState) {
             return super.onCreateView(inflater, container, savedInstanceState);
         }
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_lecture_file, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

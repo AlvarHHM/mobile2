@@ -25,8 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-        execSqlFile(sqLiteDatabase,readSqlFile());
-
+        execSqlFile(sqLiteDatabase, readSqlFile());
 
 
     }
@@ -36,20 +35,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL("drop table if exists lecture");
         sqLiteDatabase.execSQL("drop table if exists room");
-        execSqlFile(sqLiteDatabase,readSqlFile());
-
-
+        execSqlFile(sqLiteDatabase, readSqlFile());
 
 
     }
 
-    private String readSqlFile(){
+    private String readSqlFile() {
         AssetManager assetManager = context.getAssets();
         StringBuilder sql = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open("db.sql")));
             String line;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 sql.append(line);
             }
         } catch (IOException e) {
@@ -58,8 +55,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return sql.toString();
     }
 
-    private void execSqlFile(SQLiteDatabase sqLiteDatabase,String sql){
-        for(String sqlInstruction : sql.split(";")){
+    private void execSqlFile(SQLiteDatabase sqLiteDatabase, String sql) {
+        for (String sqlInstruction : sql.split(";")) {
             sqLiteDatabase.execSQL(sqlInstruction);
         }
     }

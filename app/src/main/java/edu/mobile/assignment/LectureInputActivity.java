@@ -32,6 +32,19 @@ public class LectureInputActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lecture_input);
+        bindView();
+
+        DBHelper dbHelper = new DBHelper(this, null);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("select * from room", null);
+        roomSpinner.setAdapter(new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item, c,
+                new String[]{"room"}, new int[]{android.R.id.text1},
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
+
+    }
+
+    private void bindView() {
         moduleText = (AutoCompleteTextView) findViewById(R.id.input_module);
         lecturerText = (AutoCompleteTextView) findViewById(R.id.input_lecturer);
         weekText = (AutoCompleteTextView) findViewById(R.id.input_week);
@@ -40,28 +53,20 @@ public class LectureInputActivity extends Activity {
         daySpinner = (Spinner) findViewById(R.id.input_spinner_day);
         timeSpinner = (Spinner) findViewById(R.id.input_spinner_time);
 
-        typeSpinner.setAdapter(ArrayAdapter.createFromResource(this,R.array.array_type,
+        typeSpinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.array_type,
                 android.R.layout.simple_spinner_dropdown_item));
-        daySpinner.setAdapter(ArrayAdapter.createFromResource(this,R.array.array_day,
+        daySpinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.array_day,
                 android.R.layout.simple_spinner_dropdown_item));
-        timeSpinner.setAdapter(ArrayAdapter.createFromResource(this,R.array.array_time,
+        timeSpinner.setAdapter(ArrayAdapter.createFromResource(this, R.array.array_time,
                 android.R.layout.simple_spinner_dropdown_item));
-        DBHelper dbHelper = new DBHelper(this,null);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("select * from room",null);
-        roomSpinner.setAdapter(new SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_dropdown_item,c,
-                new String[]{"room"},new int[]{android.R.id.text1},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
-
     }
 
 
-    public void submit(View view){
-        DBHelper dbHelper = new DBHelper(this,null);
+    public void submit(View view) {
+        DBHelper dbHelper = new DBHelper(this, null);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("insert into lecture(module,room,type,lecturer,semester,week,time) " +
-                "values (?,?,?,?,?,?,?)",new String[]{
+                "values (?,?,?,?,?,?,?)", new String[]{
                 moduleText.getText().toString(),
                 String.valueOf(roomSpinner.getSelectedItemPosition()),
                 String.valueOf(typeSpinner.getSelectedItem()),
@@ -71,7 +76,7 @@ public class LectureInputActivity extends Activity {
                 String.valueOf((daySpinner.getSelectedItemPosition() * 86400000)
                         + ((timeSpinner.getSelectedItemPosition() + 9) * 3600000))
         });
-        Toast.makeText(this,"Saved",Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
 
 
         finish();

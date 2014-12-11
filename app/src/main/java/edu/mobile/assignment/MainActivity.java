@@ -84,7 +84,7 @@ public class MainActivity extends Activity {
     }
 
     public void selectModule(View view) {
-        new SelectModuleDialogFragment().show(getFragmentManager(),"");
+        new SelectModuleDialogFragment().show(getFragmentManager(), "");
     }
 
     public static class SelectModuleDialogFragment extends DialogFragment {
@@ -103,8 +103,8 @@ public class MainActivity extends Activity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             c.moveToPosition(i);
-                            Intent intent = new Intent(getActivity(),LectureFileActivity.class);
-                            intent.putExtra("module",c.getString(0));
+                            Intent intent = new Intent(getActivity(), LectureFileActivity.class);
+                            intent.putExtra("module", c.getString(0));
                             startActivity(intent);
                         }
                     });
@@ -120,8 +120,10 @@ public class MainActivity extends Activity {
             builder.setTitle("Select day")
                     .setItems(R.array.array_day, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            NumberPicker semesterPicker = (NumberPicker) getActivity().findViewById(R.id.semester_picker);
-                            NumberPicker weekPicker = (NumberPicker) getActivity().findViewById(R.id.week_picker);
+                            NumberPicker semesterPicker = (NumberPicker) getActivity()
+                                    .findViewById(R.id.semester_picker);
+                            NumberPicker weekPicker = (NumberPicker) getActivity()
+                                    .findViewById(R.id.week_picker);
                             Intent intent = new Intent(getActivity(), LectureListActivity.class);
                             intent.putExtra("day", which + 1);
                             intent.putExtra("semester", semesterPicker.getValue());
@@ -134,26 +136,4 @@ public class MainActivity extends Activity {
         }
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
