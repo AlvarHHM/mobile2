@@ -63,6 +63,12 @@ public class LectureDetailFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lecture_detail, container, false);
+        bindView(rootView);
+        getLoaderManager().initLoader(0, null, this);
+        return rootView;
+    }
+
+    private void bindView(View rootView) {
         moduleText = (TextView) rootView.findViewById(R.id.text_detail_module);
         roomText = (TextView) rootView.findViewById(R.id.text_detail_room);
         typeText = (TextView) rootView.findViewById(R.id.text_detail_type);
@@ -71,9 +77,6 @@ public class LectureDetailFragment extends Fragment
         weekText = (TextView) rootView.findViewById(R.id.text_detail_week);
         timeText = (TextView) rootView.findViewById(R.id.text_detail_time);
         mapImage = (ImageView) rootView.findViewById(R.id.detail_map);
-
-        getLoaderManager().initLoader(0, null, this);
-        return rootView;
     }
 
     @Override

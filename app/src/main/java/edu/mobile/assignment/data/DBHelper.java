@@ -9,16 +9,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-/**
- * Created by alvar on 26/11/14.
- */
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "lecture";
     private Context context;
 
     public DBHelper(Context context, SQLiteDatabase.CursorFactory factory) {
-        super(context, DB_NAME, factory, 21);
+        super(context, DB_NAME, factory, 23);
         this.context = context;
     }
 

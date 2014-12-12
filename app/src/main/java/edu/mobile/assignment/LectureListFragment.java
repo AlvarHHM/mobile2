@@ -11,7 +11,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -56,6 +53,15 @@ public class LectureListFragment extends ListFragment
         week = getActivity().getIntent().getIntExtra("week", 0);
         day = getActivity().getIntent().getIntExtra("day", 0);
 
+        setUpLoadingAnimationForListView();
+
+        adapter = new LectureListAdapter(getActivity());
+        setListAdapter(adapter);
+        getListView().setOnTouchListener(this);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+    private void setUpLoadingAnimationForListView() {
         ProgressBar progressBar = new ProgressBar(getActivity());
         progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -63,11 +69,6 @@ public class LectureListFragment extends ListFragment
         getListView().setEmptyView(progressBar);
         ViewGroup root = (ViewGroup) getActivity().findViewById(android.R.id.content);
         root.addView(progressBar);
-
-        adapter = new LectureListAdapter(getActivity());
-        setListAdapter(adapter);
-        getListView().setOnTouchListener(this);
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -95,6 +96,7 @@ public class LectureListFragment extends ListFragment
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
+        //Id for empty slot
         if (id == -1) {
             return;
         }
@@ -112,13 +114,13 @@ public class LectureListFragment extends ListFragment
 
     }
 
-    private final GestureDetector gestureDetector
-            = new GestureDetector(getActivity(), new MyGestureDetector());
+    private final GestureDetector swipeDetector
+            = new GestureDetector(getActivity(), new SwipeDetector());
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        if (gestureDetector.onTouchEvent(motionEvent)) {
+        if (swipeDetector.onTouchEvent(motionEvent)) {
             showDeleteButton(getListView().pointToPosition((int) motionEvent.getX(),
                     (int) motionEvent.getY()));
             return true;
@@ -126,7 +128,7 @@ public class LectureListFragment extends ListFragment
         return false;
     }
 
-    public static class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
+    public static class SwipeDetector extends GestureDetector.SimpleOnGestureListener {
 
         public static final int SWIPE_MIN_DISTANCE = 120;
         public static final int SWIPE_THRESHOLD_VELOCITY = 100;
@@ -174,7 +176,6 @@ public class LectureListFragment extends ListFragment
 
 
         PendingIntent pi = PendingIntent.getBroadcast(getActivity(), 1, intent, PendingIntent.FLAG_ONE_SHOT);
-
         AlarmManager am = (AlarmManager) getActivity().getSystemService(getActivity().ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
     }

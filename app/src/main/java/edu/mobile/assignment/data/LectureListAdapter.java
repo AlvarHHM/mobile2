@@ -15,9 +15,7 @@ import java.util.HashMap;
 
 import edu.mobile.assignment.R;
 
-/**
- * Created by alvar on 10/12/14.
- */
+
 public class LectureListAdapter extends BaseAdapter {
 
     private final Context context;
